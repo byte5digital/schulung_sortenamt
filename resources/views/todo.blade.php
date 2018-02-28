@@ -16,14 +16,14 @@
 
 <body>
 
-
+Anzahl Aufgaben:{{Auth::user()->tasks->count()}}
 
 <form action="{{route('tasks.store')}}" method="POST">
     @csrf
     <input type="text" name="subject"/>
 
     @if($errors->has('subject'))
-    <span style="color:red;">{{$errors->first('subject')}}</span>
+        <span style="color:red;">{{$errors->first('subject')}}</span>
     @endif
 
     <button type="submit"> Submit</button>
@@ -31,14 +31,28 @@
 </form>
 
 <ul>
-@foreach($tasks as $task)
+    @foreach($tasks as $task)
 
-    <li>{{$task->subject}}</li>
+        <li>
+            <form action="{{route('tasks.update', ['task'=> $task])}}" method="POST">
+                @csrf
+                @method('put')
+                {{$task->subject}} | {{optional($task ->user)->name}}
+                <button type="submit">Update</button>
+            </form>
 
+        </li>
 
-        @endforeach
+    @endforeach
 
 </ul>
+<br/>
+<h5>erledigte Aufgaben:</h5>
+@foreach($doneTasks as $task)
+    <li> {{$task->subject}}|{{$task->done_at->format('H:i:s d.m.Y')}}|erstellt von: {{optional($task ->user)->name}}erledigt von:{{optional($task ->worker)->name}}</li>
+
+@endforeach
+
 </body>
 
 
